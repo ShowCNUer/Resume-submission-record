@@ -18,11 +18,8 @@ export default function ApplicationForm() {
     url: '',
     statusId: statuses[0]?.id || '',
     applicationDate: new Date().toISOString().split('T')[0],
-    customFields: {} as Record<string, string>,
     note: '',
   });
-
-  const [customFieldKeys, setCustomFieldKeys] = useState<string[]>([]);
 
   useEffect(() => {
     if (existingApplication) {
@@ -32,10 +29,8 @@ export default function ApplicationForm() {
         url: existingApplication.url || '',
         statusId: existingApplication.statusId,
         applicationDate: existingApplication.applicationDate,
-        customFields: existingApplication.customFields,
         note: existingApplication.note || '',
       });
-      setCustomFieldKeys(Object.keys(existingApplication.customFields));
     }
   }, [existingApplication]);
 
@@ -47,43 +42,6 @@ export default function ApplicationForm() {
       addApplication(formData);
     }
     navigate('/');
-  };
-
-  const addCustomField = () => {
-    const newKey = '自定义字段 ' + (customFieldKeys.length + 1);
-    setCustomFieldKeys([...customFieldKeys, newKey]);
-    setFormData((prev) => ({
-      ...prev,
-      customFields: { ...prev.customFields, [newKey]: '' },
-    }));
-  };
-
-  const removeCustomField = (key: string) => {
-    setCustomFieldKeys(customFieldKeys.filter((k) => k !== key));
-    setFormData((prev) => {
-      const newFields = { ...prev.customFields };
-      delete newFields[key];
-      return { ...prev, customFields: newFields };
-    });
-  };
-
-  const updateCustomField = (key: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      customFields: { ...prev.customFields, [key]: value },
-    }));
-  };
-
-  const updateCustomFieldKey = (oldKey: string, newKey: string) => {
-    if (oldKey === newKey) return;
-    const value = formData.customFields[oldKey];
-    setCustomFieldKeys(prevKeys => prevKeys.map((k) => (k === oldKey ? newKey : k)));
-    setFormData((prev) => {
-      const newFields = { ...prev.customFields };
-      delete newFields[oldKey];
-      newFields[newKey] = value;
-      return { ...prev, customFields: newFields };
-    });
   };
 
   return (
@@ -195,50 +153,6 @@ export default function ApplicationForm() {
                 placeholder="请输入备注信息，如笔试已过、月薪多少、福利如何等"
                 rows={3}
               />
-            </div>
-
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">自定义字段</h3>
-                <button
-                  type="button"
-                  onClick={addCustomField}
-                  className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  添加字段
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {customFieldKeys.map((key) => (
-                  <div key={key} className="flex items-start space-x-3">
-                    <div className="flex-1 grid grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        value={key}
-                        onChange={(e) => updateCustomFieldKey(key, e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="字段名"
-                      />
-                      <input
-                        type="text"
-                        value={formData.customFields[key] || ''}
-                        onChange={(e) => updateCustomField(key, e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="字段值"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeCustomField(key)}
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ export interface Application {
   url?: string;
   statusId: string;
   applicationDate: string;
-  customFields: Record<string, string>;
+  customFields?: Record<string, string>;
   note?: string;
   createdAt: string;
   updatedAt: string;
