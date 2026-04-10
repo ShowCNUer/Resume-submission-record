@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Edit, Trash2, ExternalLink, Building2 } from 'lucide-react';
+import { Edit, Trash2, ExternalLink, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Application, Status } from '../types';
 import { useStore } from '../store';
 
@@ -10,7 +10,14 @@ interface ApplicationCardProps {
 }
 
 export function ApplicationCard({ application, status }: ApplicationCardProps) {
-  const { deleteApplication } = useStore();
+  const { deleteApplication, updateApplication, statuses } = useStore();
+  
+  const handleStatusClick = () => {
+    const currentIndex = statuses.findIndex(s => s.id === application.statusId);
+    const nextIndex = (currentIndex + 1) % statuses.length;
+    const nextStatus = statuses[nextIndex];
+    updateApplication(application.id, { statusId: nextStatus.id });
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
@@ -28,10 +35,13 @@ export function ApplicationCard({ application, status }: ApplicationCardProps) {
             
             <div className="flex items-center space-x-4 mt-3">
               <span
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
                 style={{ backgroundColor: status.color + '20', color: status.color }}
+                onClick={handleStatusClick}
+                title="点击切换状态"
               >
                 {status.name}
+                <ChevronDown className="h-3 w-3 ml-1" />
               </span>
               
               <span className="text-sm text-gray-500">
@@ -61,6 +71,15 @@ export function ApplicationCard({ application, status }: ApplicationCardProps) {
                     </div>
                   ))}
                 </dl>
+              </div>
+            )}
+            
+            {application.note && (
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <div>
+                  <dt className="text-xs font-medium text-gray-500">备注</dt>
+                  <dd className="text-sm text-gray-700">{application.note}</dd>
+                </div>
               </div>
             )}
           </div>

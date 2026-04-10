@@ -98,6 +98,7 @@ export const useStore = create<Store>()(
             statusId,
             applicationDate: row.applicationDate || row['投递日期'] || new Date().toISOString().split('T')[0],
             customFields: {},
+            note: row.note || row['备注'] || '',
             createdAt: now,
             updatedAt: now,
           };
@@ -119,6 +120,7 @@ export const useStore = create<Store>()(
             '官网URL': app.url || '',
             '状态': status?.name || '',
             '投递日期': app.applicationDate,
+            '备注': app.note || '',
           };
           
           Object.entries(app.customFields).forEach(([key, value]) => {

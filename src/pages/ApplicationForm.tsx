@@ -19,6 +19,7 @@ export default function ApplicationForm() {
     statusId: statuses[0]?.id || '',
     applicationDate: new Date().toISOString().split('T')[0],
     customFields: {} as Record<string, string>,
+    note: '',
   });
 
   const [customFieldKeys, setCustomFieldKeys] = useState<string[]>([]);
@@ -32,6 +33,7 @@ export default function ApplicationForm() {
         statusId: existingApplication.statusId,
         applicationDate: existingApplication.applicationDate,
         customFields: existingApplication.customFields,
+        note: existingApplication.note || '',
       });
       setCustomFieldKeys(Object.keys(existingApplication.customFields));
     }
@@ -75,8 +77,7 @@ export default function ApplicationForm() {
   const updateCustomFieldKey = (oldKey: string, newKey: string) => {
     if (oldKey === newKey) return;
     const value = formData.customFields[oldKey];
-    const newKeys = customFieldKeys.map((k) => (k === oldKey ? newKey : k));
-    setCustomFieldKeys(newKeys);
+    setCustomFieldKeys(prevKeys => prevKeys.map((k) => (k === oldKey ? newKey : k)));
     setFormData((prev) => {
       const newFields = { ...prev.customFields };
       delete newFields[oldKey];
@@ -179,6 +180,20 @@ export default function ApplicationForm() {
                 value={formData.applicationDate}
                 onChange={(e) => setFormData((prev) => ({ ...prev, applicationDate: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-2">
+                备注
+              </label>
+              <textarea
+                id="note"
+                value={formData.note}
+                onChange={(e) => setFormData((prev) => ({ ...prev, note: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="请输入备注信息，如笔试已过、月薪多少、福利如何等"
+                rows={3}
               />
             </div>
 

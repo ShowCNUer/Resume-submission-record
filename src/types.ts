@@ -6,6 +6,7 @@ export interface Application {
   statusId: string;
   applicationDate: string;
   customFields: Record<string, string>;
+  note?: string;
   createdAt: string;
   updatedAt: string;
 }
